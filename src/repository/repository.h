@@ -6,8 +6,8 @@
 #define INTELLIGENTREFRIGERATOR_REPOSITORY_H
 
 
-#include "vector.h"
-#include "domain.h"
+#include "../domain/vector.h"
+#include "../domain/product.h"
 
 typedef struct {
     vector *products;

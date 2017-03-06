@@ -5,7 +5,7 @@
 #ifndef INTELLIGENTREFRIGERATOR_VECTOR_H
 #define INTELLIGENTREFRIGERATOR_VECTOR_H
 
-#include "domain.h"
+#include "product.h"
 
 typedef struct {
     int n;
