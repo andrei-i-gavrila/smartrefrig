@@ -18,7 +18,7 @@ int find(Repository *rep, char name[20], category_type category);
 
 void add(Repository *rep, Product *p);
 
-void delete(Repository *rep, int i);
+void remove(Repository *rep, int i);
 
 void update(Repository *rep, int i, Product *p);
 

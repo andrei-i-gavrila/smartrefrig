@@ -31,3 +31,10 @@ void set(vector *v, int i, Product *p) {
 int size(vector *v) {
     return v->n;
 }
+
+void delete(vector *v, int i){
+    for(; i < (v->n)-1; i++)
+    {
+        v->elements[i] = v->elements[i+1];
+    }
+}

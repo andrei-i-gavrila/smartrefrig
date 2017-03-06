@@ -21,4 +21,5 @@ void set(vector *v, int i, Product *p);
 
 int size(vector *v);
 
+void delete(vector *v, int i);
 #endif //INTELLIGENTREFRIGERATOR_VECTOR_H
