@@ -6,7 +6,7 @@
 #define INTELLIGENTREFRIGERATOR_REPOSITORY_H
 
 
-#include "../domain/vector.h"
+#include "../utils/vector.h"
 #include "../domain/product.h"
 
 typedef struct {
@@ -14,12 +14,51 @@ typedef struct {
 
 } Repository;
 
-int find(Repository *rep, char name[20], category_type category);
 
-void add(Repository *rep, Product *p);
+/// @brief Creates a repository
+/// @return Pointer to the repository
+Repository *repositoryCreate();
 
-void remove(Repository *rep, int i);
+/// @brief Destorys a repository
+/// @param rep  Repository
+/// @param dataDestructor destructor for the repo elements
+void repositoryDestroy(Repository *rep, void (*dataDestructor)(void *));
 
-void update(Repository *rep, int i, Product *p);
+/// @brief Adds an element to the repository
+/// @param rep The repository
+/// @param p The pointer for the new element
+void repositoryAdd(Repository *rep, void *p);
+
+/// @brief Searches a product in the repository
+/// @param rep Repository
+/// @param searchFunction Search function comparator
+/// @param searchAttributes Search query
+/// @return The index of the result
+int repositoryFind(Repository *rep, int (*searchFunction)(void *, void **), void **searchAttributes);
+
+/// @brief Gets the idth element from the repo
+/// @param rep The repo
+/// @param id The index to be extracted
+/// @return pointer to the extracted element
+void *repositoryGet(Repository *rep, int id);
+
+//readall
+/// @brief Returns all the elements
+/// @param rep The repo
+/// @return The vector with all the elements
+vector *repositoryAll(Repository *rep);
+
+//repositoryUpdate
+/// @brief Updates an element in the repo
+/// @param rep The repo
+/// @param i The index of the element to be updated
+/// @param p The new pointer
+void repositoryUpdate(Repository *rep, int i, void *p);
+
+//vectorDelete
+/// @brief Deletes an element from the repo
+/// @param rep The repo
+/// @param i The index of the element
+void repositoryRemove(Repository *rep, int i);
 
 #endif //INTELLIGENTREFRIGERATOR_REPOSITORY_H
