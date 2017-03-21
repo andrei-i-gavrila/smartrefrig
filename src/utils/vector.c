@@ -85,15 +85,11 @@ int vectorDelete(vector *v, int i) {
     if (i >= v->n || i < 0) {
         return 0;
     }
-
+    void *aux = v->elements[i];
     for (; i < (v->n) - 1; i++) {
         v->elements[i] = v->elements[i + 1];
     }
-
-
-    //TODO resize vector if it is n is half of max cap
-
-    v->n--;
+    v->elements[--v->n] = aux;
     return 1;
 }
 
@@ -111,8 +107,6 @@ vector *vectorNew() {
 void vectorDestroy(vector *v, void (*dataDestructor)(void *)) {
     for (int i = 0; i < v->capacity; i++) {
         if (v->elements[i] != NULL) {
-//            printf("%d", i);
-//            fflush(stdout);
             dataDestructor(v->elements[i]);
         }
     }

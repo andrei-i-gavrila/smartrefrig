@@ -12,10 +12,10 @@ void test_repository() {
 
 //    int *a = NULL;
     int *a = (int*)malloc(sizeof(int));
-//    *a = 2;
+    *a = 2;
 
     int *b = (int*)malloc(sizeof(int));
-//    *b = 32;
+    *b = 32;
     Repository *rep = repositoryCreate();
 
     repositoryAdd(rep, a);

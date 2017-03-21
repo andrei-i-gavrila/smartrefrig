@@ -11,12 +11,12 @@ void test_product() {
     Product *p = productNew("Feta", DAIRY, 20, "2017-03-10");
 
     assert(strcmp("Feta", productGetName(p)) == 0);
-    assert(strncmp("2017-03-10", productGetDate(p), 10) == 0);
+    assert(strcmp("2017-03-10", productGetDate(p)) == 0);
     assert(20 == productGetQuantity(p));
     assert(productGetCategory(p) == DAIRY);
 
-    productSetName(p, "haha");
     productSetDate(p, "1234=12=12");
+    productSetName(p, "haha");
     productSetQuantity(p, 11);
     productSetCategory(p, MEAT);
 

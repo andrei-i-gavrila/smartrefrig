@@ -59,13 +59,15 @@ void test_vector_delete() {
     *p = 2;
     int *q = malloc(sizeof(int));
     *q = 3;
+    int *r = malloc(sizeof(int));
+    *r = 4;
     vectorPushBack(v, p);
     vectorPushBack(v, q);
-    vectorPushBack(v, p);
-    vectorDelete(v, 2);
+    vectorPushBack(v, r);
+    vectorDelete(v, 1);
     assert(vectorSize(v) == 2);
     assert(vectorGet(v, 2) == NULL);
-    assert(*(int*)vectorGet(v, 1) == *q);
+    assert(*(int*)vectorGet(v, 1) == *r);
     vectorDestroy(v, free);
 }
 

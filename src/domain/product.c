@@ -43,11 +43,11 @@ int productSetName(Product *p, char *name) {
     }
 
     size_t nameLength = strlen(name) + 1;
-    if (p->name == NULL) {
-        p->name = (char *) malloc(nameLength * sizeof(char));
+    if (p->name != NULL) {
+        free(p->name);
     }
-    memcpy(p->name, name, nameLength);
-
+    p->name = (char *)calloc(nameLength, sizeof(char));
+    strcpy(p->name, name);
     return 1;
 }
 
@@ -83,11 +83,11 @@ int productSetDate(Product *p, char *date) {
     }
 
     size_t dateLength = strlen(date) + 1;
-    if (p->date == NULL) {
-        p->date = (char *) calloc(dateLength, sizeof(char));
+    if (p->date != NULL) {
+        free(p->date);
     }
-//    p->date = (char *) malloc(dateLength * sizeof(char));
-    memcpy(p->date, date, dateLength);
+    p->date = (char *) calloc(dateLength, sizeof(char));
+    strncpy(p->date, date, dateLength);
 
     return 1;
 }
