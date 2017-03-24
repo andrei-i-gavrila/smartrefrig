@@ -9,6 +9,8 @@
 
 typedef struct {
     Repository *rep;
+    vector *undoStack;
+    vector *redoStack;
 } Controller;
 
 /// @brief Creates a controller
@@ -28,7 +30,7 @@ void controllerDestroy(Controller *ctrl);
 /// @param date The product date
 /// @return 1 if new product was added, 0 if updated
 int controllerAddProduct(Controller *ctrl, char *name, category_type type,
-                          int quantity, char *date);
+                         int quantity, char *date);
 
 /// @brief Updates a product
 /// @param ctrl The controller
@@ -38,7 +40,7 @@ int controllerAddProduct(Controller *ctrl, char *name, category_type type,
 /// @param newDate The new date
 /// @return 1 if update was done, 0 if product was not found
 int controllerUpdateProduct(Controller *ctrl, char *name, category_type type,
-                             int newQuantity, char *newDate);
+                            int newQuantity, char *newDate);
 
 /// @brief Deletes a product from the repository
 /// @param ctrl controller
@@ -52,12 +54,16 @@ int controllerDeleteProduct(Controller *ctrl, char *name, category_type type);
 /// @return Pointer to a vector that has all the products
 vector *controllerGetAllProducts(Controller *ctrl);
 
+
 /// @brief Gets only filtered products
 /// @param ctrl Controller
 /// @param query The query
 /// @return pointer to a filtered vector
-vector *controllerGetProducts(Controller *ctrl, char *query);
+vector *controllerGetProducts(Controller *ctrl, int (*filter)(void *, void **), void **filters,
+                              int (*comparator)(const void *, const void *));
 
-vector *controllerGetProductsFiltered(Controller *ctrl, int (*filter)(void *, void **), void **filters);
+int controllerUndo(Controller *ctrl);
+
+int controllerRedo(Controller *ctrl);
 
 #endif //INTELLIGENTREFRIGERATOR_CONTROLLER_H

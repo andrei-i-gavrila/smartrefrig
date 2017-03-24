@@ -23,7 +23,11 @@ void repositoryRemove(Repository *rep, int i) {
 }
 
 void repositoryUpdate(Repository *rep, int i, void *p) {
+    void *old = vectorGet(rep->products, i);
+
+    rep->products->destructor(old);
     vectorSet(rep->products, i, p);
+
 }
 
 int repositoryFind(Repository *rep, int (*searchFunction)(void *, void **), void **searchAttributes) {
@@ -37,14 +41,14 @@ int repositoryFind(Repository *rep, int (*searchFunction)(void *, void **), void
     return -1;
 }
 
-Repository *repositoryCreate() {
+Repository *repositoryCreate(void (*destructor)(void *), void *(*cloner)(void *)) {
     Repository *rep = malloc(sizeof(Repository));
-    rep->products =  vectorNew();
+    rep->products = vectorNew(destructor, cloner);
 
     return rep;
 }
 
-void repositoryDestroy(Repository *rep, void (*dataDestructor)(void *)) {
-    vectorDestroy(rep->products, dataDestructor);
+void repositoryDestroy(Repository *rep) {
+    vectorDestroy(rep->products);
     free(rep);
 }

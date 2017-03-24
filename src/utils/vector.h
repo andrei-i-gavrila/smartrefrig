@@ -12,12 +12,29 @@ typedef struct {
     unsigned n;
     unsigned capacity;
     void **elements;
+    void (*destructor)(void*);
+    void* (*cloner)(void*);
 
 } vector;
 
 /// @brief Initializes a new empty vector
 /// @return Pointer to the initialized vector
-vector *vectorNew();
+vector *vectorNew(void (*destructor)(void*), void *(*cloner)(void*));
+
+/// @brief Destroys the memory allocated for a vector
+/// @param v The vector
+void vectorDestroy(vector *v);
+
+/// @brief Changes the size of a vector to the new size
+/// @param v The vector
+/// @param newsize The new size
+/// @return 1 if successful, 0 otherwise
+int vectorResize(vector *v, unsigned newsize);
+
+/// @brief Clones a vector together with its content
+/// @param v The origin vector
+/// @return The cloned vector
+vector *vectorClone(vector *v);
 
 /// @brief Pushes a new element to the end of the vector and increases the size
 /// @param v The vector to be altered
@@ -49,15 +66,10 @@ int vectorSize(vector *v);
 /// @return
 int vectorDelete(vector *v, int i);
 
-/// @brief Changes the size of a vector to the new size
-/// @param v The vector
-/// @param newsize The new size
-/// @return 1 if successful, 0 otherwise
-int vectorResize(vector *v, unsigned newsize);
-
-/// @brief Destroys the memory allocated for a vector
-/// @param v The vector
-void vectorDestroy(vector *v, void (*dataDestructor)(void *));
+/// @brief Vector functioning as a stack, pops the top
+/// @param v The stack vector
+/// @return The popped element which has been removed from the vector
+void* vectorPop(vector *v);
 
 /// @brief Filters a vector based on a comparator
 /// @param v The vector to be filtered
@@ -69,5 +81,10 @@ vector *vectorFilter(vector *v, int (*comparator)(void *, void **), void **filte
 /// @brief Sorts a vector in place
 /// @param v The vector
 /// @param comparator The sorting function
-void vectorSort(vector *v, int (*comparator)(void *, void *));
+void vectorSort(vector *v, int (*comparator)(const void *, const void *));
+
+/// @brief Deletes every element from the vector. Its capacity does not change
+/// @param v The vector
+void vectorClear(vector *v);
+
 #endif //INTELLIGENTREFRIGERATOR_VECTOR_H

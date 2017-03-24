@@ -17,17 +17,17 @@ typedef struct {
 
 /// @brief Creates a repository
 /// @return Pointer to the repository
-Repository *repositoryCreate();
+Repository *repositoryCreate(void (*destructor)(void *), void *(*cloner)(void *));
 
 /// @brief Destorys a repository
 /// @param rep  Repository
 /// @param dataDestructor destructor for the repo elements
-int repositoryDestroy(Repository *rep, void (*dataDestructor)(void *));
+void repositoryDestroy(Repository *rep);
 
 /// @brief Adds an element to the repository
 /// @param rep The repository
 /// @param p The pointer for the new element
-int repositoryAdd(Repository *rep, void *p);
+void repositoryAdd(Repository *rep, void *p);
 
 /// @brief Searches a product in the repository
 /// @param rep Repository

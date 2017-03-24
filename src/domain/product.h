@@ -5,15 +5,17 @@
 #ifndef INTELLIGENTREFRIGERATOR_DOMAIN_H
 #define INTELLIGENTREFRIGERATOR_DOMAIN_H
 
+#include <time.h>
+
 typedef enum {
-    DAIRY, SWEETS, MEAT, FRUIT
+    DAIRY, SWEETS, MEAT, FRUIT, UNDEFINED_CATEGORY
 } category_type;
 
 typedef struct {
     char *name;
     category_type category;
     int quantity;
-    char *date;
+    struct tm date;
 } Product;
 
 /// @brief Creates a new product
@@ -27,6 +29,12 @@ Product *productNew(char *name, category_type type, int qty, char *date);
 /// @brief Destroys a product
 /// @param p The product to be destroyed
 void productDestroy(void *p);
+
+
+/// @brief Clone a product
+/// @param p Original product
+/// @return Cloned product
+void* productClone(void *p);
 
 /// @brief Returns a product name
 /// @param p The product
@@ -53,7 +61,7 @@ int productSetQuantity(Product *p, int quantity);
 /// @brief Returns a product date
 /// @param p The product
 /// @return The date of the product
-char *productGetDate(Product *p);
+void productGetDate(Product *p, char buf[11]);
 
 /// @brief Sets a product date
 /// @param p The product
@@ -84,6 +92,9 @@ int productSearch(void *product, void **searchAttributes);
 /// @return 1 if true, 0 if not
 int productNameContains(void *product, void **filters);
 
+int productFilterDate(void *p, void **filters);
+
+
 int productCategory(void *product, void **filters);
 
 /// @brief String representation of product
@@ -91,5 +102,7 @@ int productCategory(void *product, void **filters);
 /// @return The string representation
 char *productString(void *p);
 
-int productSortQuantity(void *a, void *b);
+int productSortQuantityDesc(const void *a, const void *b);
+
+int productSortQuantityAsc(const void *a, const void *b);
 #endif //INTELLIGENTREFRIGERATOR_DOMAIN_H

@@ -14,7 +14,7 @@ Product *productNew(char *name, category_type type, int qty, char *date) {
         return NULL;
     }
     p->name = NULL;
-    p->date = NULL;
+    memset(&p->date, 0, sizeof(struct tm));
     productSetName(p, name);
     productSetDate(p, date);
     productSetQuantity(p, qty);
@@ -25,7 +25,6 @@ Product *productNew(char *name, category_type type, int qty, char *date) {
 
 void productDestroy(void *p) {
     free(((Product *) p)->name);
-    free(((Product *) p)->date);
     free(p);
 }
 
@@ -46,7 +45,7 @@ int productSetName(Product *p, char *name) {
     if (p->name != NULL) {
         free(p->name);
     }
-    p->name = (char *)calloc(nameLength, sizeof(char));
+    p->name = (char *) malloc(nameLength*sizeof(char));
     strcpy(p->name, name);
     return 1;
 }
@@ -69,12 +68,8 @@ int productSetQuantity(Product *p, int quantity) {
     return 1;
 }
 
-char *productGetDate(Product *p) {
-    if (p == NULL) {
-        return NULL;
-    }
-
-    return p->date;
+void productGetDate(Product *p, char ret[11]) {
+    strftime(ret, 11, "%F", &p->date);
 }
 
 int productSetDate(Product *p, char *date) {
@@ -82,13 +77,15 @@ int productSetDate(Product *p, char *date) {
         return 0;
     }
 
-    size_t dateLength = strlen(date) + 1;
-    if (p->date != NULL) {
-        free(p->date);
+    int y, m, d;
+    if (sscanf(date, "%d-%d-%d", &y, &m, &d) != 3) {
+        return 0;
     }
-    p->date = (char *) calloc(dateLength, sizeof(char));
-    strncpy(p->date, date, dateLength);
 
+    p->date.tm_year = y - 1900;
+    p->date.tm_mon = m - 1;
+    p->date.tm_mday = d;
+    p->date.tm_isdst = 0;
     return 1;
 }
 
@@ -118,10 +115,21 @@ int productSearch(void *product, void **searchAttributes) {
     return 0;
 }
 
-int productNameContains(void *p, void **filters) {
+int productFilterDate(void *p, void **filters) {
 
+    int days = *(int *) filters[0];
+    int seconds = days * 24 * 60 * 60;
+
+    time_t now = time(NULL);
+
+    double diff = difftime(mktime(&((Product *)p)->date), now);
+
+    return diff <= seconds;
+}
+
+int productNameContains(void *p, void **filters) {
     char *query = (char *) filters[0];
-    return strstr(productGetName(p), query) != NULL;
+    return strcmp(query, "\n") == 0 ? 1 : strstr(productGetName(p), query) != NULL;
 
 }
 
@@ -136,6 +144,8 @@ const char *categoryString(category_type t) {
             return "Sweets";
         case FRUIT:
             return "Fruit";
+        case UNDEFINED_CATEGORY:
+            break;
     }
     return "";
 }
@@ -144,17 +154,33 @@ char *productString(void *p) {
     char *str = calloc(100, sizeof(char));
 
 
+    char date[11];
+    productGetDate(p, date);
     sprintf(str, "%s\nCategory %s. Expires at %s. Quantity %d", productGetName(p),
-            categoryString(productGetCategory(p)), productGetDate(p), productGetQuantity(p));
+            categoryString(productGetCategory(p)), date, productGetQuantity(p));
     return str;
 }
 
-int productSortQuantity(void *a, void *b) {
+int productSortQuantityDesc(const void *a, const void *b) {
     return productGetQuantity(*(void **) b) - productGetQuantity(*(void **) a);
 }
 
 int productCategory(void *product, void **filters) {
     category_type t = *(category_type *) filters[0];
 
-    return productGetCategory(product) == t;
+    return t == UNDEFINED_CATEGORY? 1: productGetCategory(product) == t;
+}
+
+void *productClone(void *p) {
+    if (p == NULL) {
+        return NULL;
+    }
+    char b[11];
+    productGetDate((Product *) p, b);
+    Product *new = productNew(((Product *) p)->name, ((Product *) p)->category, ((Product *) p)->quantity, b);
+    return new;
+}
+
+int productSortQuantityAsc(const void *a, const void *b) {
+    return productGetQuantity(*(void **) a) - productGetQuantity(*(void **) b);
 }
